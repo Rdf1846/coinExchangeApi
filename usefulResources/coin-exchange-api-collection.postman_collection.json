@@ -1,0 +1,71 @@
+{
+	"info": {
+		"_postman_id": "83f855e8-2602-4cc8-bb7f-a890e1e24b11",
+		"name": "coin-exchange-api-collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "36899258"
+	},
+	"item": [
+		{
+			"name": "Sell Coins - RegisterSeller",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\" : \"fatai Kasana\",\r\n    \"mobileNumber\" : \"+91-981062XXXX\",\r\n    \"email\" : \"fatai.kasana@gmail.com\",\r\n    \"latitude\" : 28.6692, \r\n    \"longitude\" : 77.4538,\r\n    \"coinsToSell\" : 500,\r\n    \"coinType\" : 5\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/coinExchangeApp/api/sell-coins",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"coinExchangeApp",
+						"api",
+						"sell-coins"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Buy Coins - RegisterBuyer_FetchBuyerDetailsAndFetchSellerList",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\" : \"Deepak\",\r\n    \"mobileNumber\" : \"+91-806050XXXX\",\r\n    \"email\" : \"Deepak.singh@gmail.com\",\r\n    \"latitude\" : 28.6692, \r\n    \"longitude\" : 77.4538,\r\n    \"coinsToBuy\" : 200,\r\n    \"coinType\" : 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/coinExchangeApp/api/buy-coins/sellerList",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"coinExchangeApp",
+						"api",
+						"buy-coins",
+						"sellerList"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
