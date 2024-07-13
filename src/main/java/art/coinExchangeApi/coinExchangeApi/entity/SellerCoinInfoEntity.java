@@ -18,10 +18,10 @@ public class SellerCoinInfoEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private  int id;
 
-    @Column(name = "coinType", nullable = false, columnDefinition = "INT DEFAULT 0")
-    private Integer coinType;
+    @Column(name = "coin_Type", nullable = false, columnDefinition = "INT DEFAULT 0")
+    private Integer coin_Type;
 
-    @Column(name = "coinsToSell", nullable = false, columnDefinition = "INT DEFAULT 0")
-    private Integer coinsToSell;
+    @Column(name = "coins_To_Sell", nullable = false, columnDefinition = "INT DEFAULT 0")
+    private Integer coins_To_Sell;
 
 }

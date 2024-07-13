@@ -10,6 +10,7 @@ import art.coinExchangeApi.coinExchangeApi.mapper.MapperClass;
 import art.coinExchangeApi.coinExchangeApi.repository.BuyerRepository;
 import art.coinExchangeApi.coinExchangeApi.repository.SellerRepository;
 import art.coinExchangeApi.coinExchangeApi.service.CoinExchangeService;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,16 +45,20 @@ public class CoinExchangeServiceImpl implements CoinExchangeService {
 
         logger.info(" Ensure sellerCoinInfoEntity list is initialized with valid SellerCoinInfoEntity objects");
         List<SellerCoinInfoEntity> sellerCoinInfoEntities = new ArrayList<>();
-        for (SellerCoinInfoEntity tempEntity : sellerDto.getSellerCoinInfoEntity()) {
-            SellerCoinInfoEntity sellerCoinInfoEntity = new SellerCoinInfoEntity();
-            sellerCoinInfoEntity.setCoinType(tempEntity.getCoinType());
-            sellerCoinInfoEntity.setCoinsToSell(tempEntity.getCoinsToSell());
-            sellerCoinInfoEntities.add(sellerCoinInfoEntity);
+        if (sellerDto.getSellerCoinInfoEntity() != null) {
+            for (SellerCoinInfoEntity tempEntity : sellerDto.getSellerCoinInfoEntity()) {
+                SellerCoinInfoEntity sellerCoinInfoEntity = new SellerCoinInfoEntity();
+                sellerCoinInfoEntity.setCoin_Type(tempEntity.getCoin_Type());
+                sellerCoinInfoEntity.setCoins_To_Sell(tempEntity.getCoins_To_Sell());
+                sellerCoinInfoEntities.add(sellerCoinInfoEntity);
+                logger.info("ouput 1:", tempEntity.getCoin_Type());
+                logger.info("Output: Coin_Type={}, Coins_To_Sell={}", tempEntity.getCoin_Type(), tempEntity.getCoins_To_Sell());
+
+            }
         }
         seller.setSellerCoinInfoEntity(sellerCoinInfoEntities);
         logger.info("Set the initialized list to the seller entity");
-
-
+        logger.info("ouput 2:", sellerCoinInfoEntities.toString());
 
         Seller savedSeller = sellerRepository.save(seller);
         logger.info("saving the seller entity using save method");
@@ -75,6 +80,7 @@ public class CoinExchangeServiceImpl implements CoinExchangeService {
     }
 
     @Override
+    @Transactional
     public List<SellerDto> findSellers(List<BuyerCoinInfoEntity> buyerCoinInfoList) {
 
         logger.debug("enter find sellers method");
@@ -109,12 +115,12 @@ public class CoinExchangeServiceImpl implements CoinExchangeService {
 
             // Find matching CoinInfo in seller's list
             SellerCoinInfoEntity sellerCoinInfoEntityy = seller.getSellerCoinInfoEntity().stream()
-                    .filter(sellerCoinInfoEntity -> sellerCoinInfoEntity.getCoinType().equals(coinType))
+                    .filter(sellerCoinInfoEntity -> sellerCoinInfoEntity.getCoin_Type().equals(coinType))
                     .findFirst()
                     .orElse(null);
 
             // Check if seller has enough coins to sell for this coin type
-            if (sellerCoinInfoEntityy == null || coinsToBuyValue > sellerCoinInfoEntityy.getCoinsToSell()) {
+            if (sellerCoinInfoEntityy == null || coinsToBuyValue > sellerCoinInfoEntityy.getCoins_To_Sell()) {
                 return false;
             }
         }
