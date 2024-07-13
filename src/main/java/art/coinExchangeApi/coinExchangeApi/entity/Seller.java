@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -21,7 +23,8 @@ public class Seller {
     private String email;
     private double latitude;
     private double longitude;
-    private int coinsToSell;
-    private int coinType;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<SellerCoinInfoEntity> sellerCoinInfoEntity;
 
 }

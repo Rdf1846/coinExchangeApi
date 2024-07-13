@@ -6,6 +6,8 @@ import art.coinExchangeApi.coinExchangeApi.entity.Buyer;
 import art.coinExchangeApi.coinExchangeApi.entity.Seller;
 import jakarta.validation.constraints.NotNull;
 
+import java.util.Map;
+
 public class MapperClass {
 
     public static Seller mapSellerDtoToSellerJpaEntity(@NotNull SellerDto sellerDto)
@@ -17,8 +19,9 @@ public class MapperClass {
                 sellerDto.getEmail(),
                 sellerDto.getLatitude(),
                 sellerDto.getLongitude(),
-                sellerDto.getCoinsToSell(),
-                sellerDto.getCoinType()
+                sellerDto.getSellerCoinInfoEntity()
+//                sellerDto.getCoinsToSell(),
+//                sellerDto.getCoinType()
         );
         return seller;
     }
@@ -32,8 +35,9 @@ public class MapperClass {
                 seller.getEmail(),
                 seller.getLatitude(),
                 seller.getLongitude(),
-                seller.getCoinsToSell(),
-                seller.getCoinType()
+                seller.getSellerCoinInfoEntity()
+//                seller.getCoinsToSell(),
+//                seller.getCoinType()
         );
         return sellerDto;
     }
@@ -47,8 +51,9 @@ public class MapperClass {
                 buyerDto.getEmail(),
                 buyerDto.getLatitude(),
                 buyerDto.getLongitude(),
-                buyerDto.getCoinsToBuy(),
-                buyerDto.getCoinType()
+                buyerDto.getBuyerCoinInfoEntity()
+//                buyerDto.getCoinsToBuy(),
+//                buyerDto.getCoinType()
         );
         return buyer;
     }
@@ -62,8 +67,9 @@ public class MapperClass {
                 buyer.getEmail(),
                 buyer.getLatitude(),
                 buyer.getLongitude(),
-                buyer.getCoinsToBuy(),
-                buyer.getCoinType()
+                buyer.getBuyerCoinInfoEntity()
+//                buyer.getCoinsToBuy(),
+//                buyer.getCoinType()
         );
         return buyerDto;
     }

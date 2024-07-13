@@ -4,6 +4,10 @@ import art.coinExchangeApi.coinExchangeApi.customResponseEntity.BuyerCustomRespo
 import art.coinExchangeApi.coinExchangeApi.dto.BuyerDto;
 import art.coinExchangeApi.coinExchangeApi.dto.SellerDto;
 import art.coinExchangeApi.coinExchangeApi.service.CoinExchangeService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
@@ -32,12 +37,15 @@ public class CoinExchangeController {
     }
 
     @PostMapping("/buy-coins/sellerList")
-    public ResponseEntity<BuyerCustomResponseEntity<BuyerDto, List<SellerDto>>> registerBuyerAndFetchSellerList(@RequestBody BuyerDto buyerDto) {
+    public ResponseEntity<BuyerCustomResponseEntity<BuyerDto, List<SellerDto>>> registerBuyerAndFetchSellerList(@RequestBody BuyerDto buyerDto)
+    {
 
-       BuyerDto buyerDto1 = coinExchangeService.registerBuyer(buyerDto);
-        List<SellerDto> sellerDtoList = coinExchangeService.findSellers(buyerDto.getCoinsToBuy());
-        BuyerCustomResponseEntity<BuyerDto, List<SellerDto>> customResponse = new BuyerCustomResponseEntity<>(buyerDto1, sellerDtoList);
-        return ResponseEntity.ok(customResponse);
+        BuyerDto buyerDto1 = coinExchangeService.registerBuyer(buyerDto);
+            List<SellerDto> sellerDtoList = coinExchangeService.findSellers(buyerDto1.getBuyerCoinInfoEntity());
+            BuyerCustomResponseEntity<BuyerDto, List<SellerDto>> customResponse = new BuyerCustomResponseEntity<>(buyerDto1, sellerDtoList);
+
+            return ResponseEntity.ok(customResponse);
+
     }
 
 

@@ -1,7 +1,12 @@
 package art.coinExchangeApi.coinExchangeApi.dto;
 
+import art.coinExchangeApi.coinExchangeApi.entity.SellerCoinInfoEntity;
+import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+
+import java.util.List;
+import java.util.Map;
 
 @Data
 @AllArgsConstructor
@@ -13,6 +18,9 @@ public class SellerDto {
     private String email;
     private double latitude;
     private double longitude;
-    private int coinsToSell;
-    private int coinType;
+
+    private List<SellerCoinInfoEntity> sellerCoinInfoEntity;
+
+   // private int coinsToSell;
+   // private int coinType;
 }
