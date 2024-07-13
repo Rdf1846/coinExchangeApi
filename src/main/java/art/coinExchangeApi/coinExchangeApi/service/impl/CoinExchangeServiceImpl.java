@@ -50,9 +50,12 @@ public class CoinExchangeServiceImpl implements CoinExchangeService {
     @Override
     public List<SellerDto> findSellers(int coinsToBuy) {
         List<Seller> allSellerList = sellerRepository.findAll();
-        List<SellerDto> allSellerDtoList = allSellerList.stream()
+
+        List<SellerDto> filteredSellerDtoList = allSellerList.stream()
+                .filter(seller -> seller.getCoinsToSell() >= coinsToBuy)
                 .map((seller) ->  MapperClass.mapSellerJpaEntityToSellerDto(seller))
                 .collect(Collectors.toList());
-        return allSellerDtoList;
+
+        return filteredSellerDtoList;
     }
 }

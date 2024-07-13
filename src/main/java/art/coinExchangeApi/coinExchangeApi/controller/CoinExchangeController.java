@@ -26,16 +26,9 @@ public class CoinExchangeController {
     }
 
     @PostMapping("/sell-coins")
-    public ResponseEntity<SellerDto> registerSeller(@RequestBody SellerDto sellerDto) {
-        return new ResponseEntity<>(coinExchangeService.registerSeller(sellerDto), HttpStatus.CREATED);
-    }
-
-    @PostMapping("/buy-coins")
-    public ResponseEntity<List<SellerDto>> registerBuyer(@RequestBody BuyerDto buyerDto) {
-
-        coinExchangeService.registerBuyer(buyerDto);
-        List<SellerDto> sellerDtoList = coinExchangeService.findSellers(buyerDto.getCoinsToBuy());
-        return ResponseEntity.ok(sellerDtoList);
+    public ResponseEntity<String> registerSeller(@RequestBody SellerDto sellerDto) {
+        coinExchangeService.registerSeller(sellerDto);
+        return ResponseEntity.ok("Your profile has been created successfully and addedd to our database. If we found any buyer, then we will share your profile with them so that they can contact you directly! Thanks for selling");
     }
 
     @PostMapping("/buy-coins/sellerList")
