@@ -3,8 +3,6 @@ package art.coinExchangeApi.coinExchangeApi.controller;
 import art.coinExchangeApi.coinExchangeApi.customResponseEntity.BuyerCustomResponseEntity;
 import art.coinExchangeApi.coinExchangeApi.dto.BuyerDto;
 import art.coinExchangeApi.coinExchangeApi.dto.SellerDto;
-import art.coinExchangeApi.coinExchangeApi.entity.Buyer;
-import art.coinExchangeApi.coinExchangeApi.entity.Seller;
 import art.coinExchangeApi.coinExchangeApi.service.CoinExchangeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,6 +20,7 @@ public class CoinExchangeController {
 
     private CoinExchangeService coinExchangeService;
 
+    @Autowired
     public CoinExchangeController(CoinExchangeService coinExchangeService) {
         this.coinExchangeService = coinExchangeService;
     }

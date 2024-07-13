@@ -8,7 +8,9 @@ import art.coinExchangeApi.coinExchangeApi.mapper.MapperClass;
 import art.coinExchangeApi.coinExchangeApi.repository.BuyerRepository;
 import art.coinExchangeApi.coinExchangeApi.repository.SellerRepository;
 import art.coinExchangeApi.coinExchangeApi.service.CoinExchangeService;
+import lombok.NoArgsConstructor;
 import org.apache.catalina.mapper.Mapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,15 +21,14 @@ public class CoinExchangeServiceImpl implements CoinExchangeService {
 
     private SellerRepository sellerRepository;
 
-    public CoinExchangeServiceImpl(SellerRepository sellerRepository) {
-        this.sellerRepository = sellerRepository;
-    }
-
     private BuyerRepository buyerRepository;
 
-    public CoinExchangeServiceImpl(BuyerRepository buyerRepository) {
+    @Autowired
+    public CoinExchangeServiceImpl(SellerRepository sellerRepository, BuyerRepository buyerRepository) {
+        this.sellerRepository = sellerRepository;
         this.buyerRepository = buyerRepository;
     }
+
 
     @Override
     public SellerDto registerSeller(SellerDto sellerDto) {
