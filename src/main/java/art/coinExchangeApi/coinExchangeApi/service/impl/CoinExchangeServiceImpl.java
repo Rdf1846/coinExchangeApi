@@ -10,7 +10,6 @@ import art.coinExchangeApi.coinExchangeApi.mapper.MapperClass;
 import art.coinExchangeApi.coinExchangeApi.repository.BuyerRepository;
 import art.coinExchangeApi.coinExchangeApi.repository.SellerRepository;
 import art.coinExchangeApi.coinExchangeApi.service.CoinExchangeService;
-import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,11 +37,11 @@ public class CoinExchangeServiceImpl implements CoinExchangeService {
 
     @Override
     public SellerDto registerSeller(SellerDto sellerDto) {
-        logger.info("Enter register seller");
+        logger.info("Entered register seller");
         Seller seller = MapperClass.mapSellerDtoToSellerJpaEntity(sellerDto);
         logger.info("mapped SellerDto To SellerJpaEntity");
 
-        logger.info(" Ensure sellerCoinInfoEntity list is initialized with valid SellerCoinInfoEntity objects");
+        logger.info(" Ensuring that sellerCoinInfoEntity list is initialized with valid SellerCoinInfoEntity objects");
         List<SellerCoinInfoEntity> sellerCoinInfoEntities = new ArrayList<>();
         if (sellerDto.getSellerCoinInfoEntity() != null) {
             for (SellerCoinInfoEntity tempEntity : sellerDto.getSellerCoinInfoEntity()) {
@@ -53,78 +51,89 @@ public class CoinExchangeServiceImpl implements CoinExchangeService {
                 sellerCoinInfoEntity.setSellerInSellerCoinInfoEntity(seller); // Set the reference to Seller
                 sellerCoinInfoEntities.add(sellerCoinInfoEntity);
                 logger.info("Output: Coin_Type={}, Coins_To_Sell={}", tempEntity.getCoin_Type(), tempEntity.getCoins_To_Sell());
-
             }
         }
         seller.setSellerCoinsDetailsList(sellerCoinInfoEntities);
         logger.info("Set the initialized list to the seller entity");
-        logger.info("ouput 2:", sellerCoinInfoEntities.toString());
 
         Seller savedSeller = sellerRepository.save(seller);
         logger.info("saving the seller entity using save method");
         SellerDto sellerDTo = MapperClass.mapSellerJpaEntityToSellerDto(savedSeller);
         logger.info("mapping back seller jpa entity to seller dto");
-        logger.debug("Exit register seller");
+        logger.info("Exit register seller");
         return sellerDTo;
 
     }
 
     @Override
     public BuyerDto registerBuyer(BuyerDto buyerDto) {
-        logger.debug("enter register buyer");
+        logger.debug("Entered register buyer");
         Buyer buyer = MapperClass.mapBuyerDtoToBuyerJpaEntity(buyerDto);
+        logger.info("mapped BuyerDto To BuyerJpaEntity");
+
+        logger.info(" Ensuring that buyerCoinInfoEntity list is initialized with valid BuyerCoinInfoEntity objects");
+        List<BuyerCoinInfoEntity> buyerCoinInfoEntities = new ArrayList<>();
+        if (buyerDto.getBuyerCoinInfoEntity() != null) {
+            for (BuyerCoinInfoEntity tempEntity : buyerDto.getBuyerCoinInfoEntity()) {
+                BuyerCoinInfoEntity buyerCoinInfoEntity = new BuyerCoinInfoEntity();
+                buyerCoinInfoEntity.setCoin_Type(tempEntity.getCoin_Type());
+                buyerCoinInfoEntity.setCoins_To_Buy(tempEntity.getCoins_To_Buy());
+                buyerCoinInfoEntity.setBuyerInBuyerCoinInfoEntity(buyer); // Set the reference to Seller
+                buyerCoinInfoEntities.add(buyerCoinInfoEntity);
+                logger.info("Output: Coin_Type={}, Coins_To_Buy={}", tempEntity.getCoin_Type(), tempEntity.getCoins_To_Buy());
+            }
+        }
+        buyer.setBuyerCoinInfoDetailsList(buyerCoinInfoEntities);
+        logger.info("Set the initialized list to the buyer entity");
+
         Buyer savedBuyer = buyerRepository.save(buyer);
+        logger.info("saving the buyer entity using save method");
         BuyerDto buyerDTo = MapperClass.mapBuyerJpaEntityToBuyerDTo(savedBuyer);
+        logger.info("mapping back buyer jpa entity to buyer dto");
         logger.debug("exit register buyer");
         return buyerDTo;
     }
 
     @Override
-    @Transactional
     public List<SellerDto> findSellers(List<BuyerCoinInfoEntity> buyerCoinInfoList) {
 
-        logger.debug("enter find sellers method");
+        logger.info("Entered find sellers method to check if seller is eligible");
 
-        Map<Integer, Integer> buyerCoinsDetailsMap = buyerCoinInfoList.stream()
-                .collect(Collectors.toMap(BuyerCoinInfoEntity::getCoinType, BuyerCoinInfoEntity::getCoinsToBuy));
-
-        logger.debug("converted list to map succesffully");
+        List<BuyerCoinInfoEntity> tempList = buyerCoinInfoList;
+        
+        logger.info("converting buyerCoinInfo list to Map");
+//        Map<Integer, Integer> buyerCoinsDetailsMap = buyerCoinInfoList.stream()
+//                .collect(Collectors.toMap(BuyerCoinInfoEntity::getCoin_Type, BuyerCoinInfoEntity::getCoins_To_Buy));
+        logger.info("converted list to map successfully, using stream function");
 
         List<Seller> allSellerList = sellerRepository.findAll();
+        logger.debug("successfully fetched the list of all sellers in the database");
 
-        logger.debug("successfully fetched the list of all sellers");
+        logger.info("fetching the eligible list of sellers who have either equal or greater coins to sell than buyer wants");
+        
+        List<SellerDto> filteredSellerDtoList = fetchReqdSeller(tempList, allSellerList);
 
-        List<SellerDto> filteredSellerDtoList = allSellerList.stream()
-                .filter(seller -> isSellerEligible(seller, buyerCoinsDetailsMap))
-                .map((seller) ->  MapperClass.mapSellerJpaEntityToSellerDto(seller))
-                .collect(Collectors.toList());
 
-        logger.debug("returning selected sellers list");
+        logger.info("returning selected sellers list");
 
         return filteredSellerDtoList;
     }
 
-    // Checking if a seller is eligible based on coinsToBuy >= coinsToSell for each one coin type
-    private boolean isSellerEligible(Seller seller, Map<Integer, Integer> buyerCoinsDetailsMap)  {
 
-        logger.debug("checking if seller have sufficient coins");
+	/**
+	 * @param tempList
+	 * @param allSellerList
+	 * @return
+	 */
+	private List<SellerDto> fetchReqdSeller(List<BuyerCoinInfoEntity> tempList, List<Seller> allSellerList) {
+		return allSellerList.stream().
+										        	filter(seller -> seller.getSellerCoinsDetailsList().stream()
+										        			.anyMatch(sellerCoinInfoDetails -> tempList.stream()
+										        					.anyMatch(req -> sellerCoinInfoDetails.getCoin_Type().equals(req.getCoin_Type()) 
+										        							&& sellerCoinInfoDetails.getCoins_To_Sell() >= req.getCoins_To_Buy())))
+										        					.map((seller) ->  MapperClass.mapSellerJpaEntityToSellerDto(seller))
+										        							.collect(Collectors.toList());
+	}
 
-        for (Map.Entry<Integer, Integer> entry : buyerCoinsDetailsMap.entrySet()) {
-            Integer coinType = entry.getKey();
-            Integer coinsToBuyValue = entry.getValue();
 
-            // Find matching CoinInfo in seller's list
-            SellerCoinInfoEntity sellerCoinInfoEntityy = seller.getSellerCoinsDetailsList().stream()
-                    .filter(sellerCoinInfoEntity -> sellerCoinInfoEntity.getCoin_Type().equals(coinType))
-                    .findFirst()
-                    .orElse(null);
-
-            // Check if seller has enough coins to sell for this coin type
-            if (sellerCoinInfoEntityy == null || coinsToBuyValue > sellerCoinInfoEntityy.getCoins_To_Sell()) {
-                return false;
-            }
-        }
-        return true;
-
-    }
 }

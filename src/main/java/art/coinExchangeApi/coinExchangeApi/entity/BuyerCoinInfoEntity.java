@@ -10,20 +10,20 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-@Table(name = "Buyer_coin_details")
+@Table(name = "Jpa_Buyer_coin_details")
 @Entity
 public class BuyerCoinInfoEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private  int ids;
 
-    @Column(name = "coinType", nullable = false, columnDefinition = "INT DEFAULT 0")
-    private Integer coinType;
+    @Column(name = "coin_Type", nullable = false, columnDefinition = "INT DEFAULT 0")
+    private Integer coin_Type;
 
-    @Column(name = "coinsToBuy", nullable = false, columnDefinition = "INT DEFAULT 0")
-    private Integer coinsToBuy;
+    @Column(name = "coins_To_Buy", nullable = false, columnDefinition = "INT DEFAULT 0")
+    private Integer coins_To_Buy;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "buyer_id")
     private Buyer buyerInBuyerCoinInfoEntity;
 }

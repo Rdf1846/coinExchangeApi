@@ -13,7 +13,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"name\" : \"fatai Kasana\",\r\n    \"mobileNumber\" : \"+91-981062XXXX\",\r\n    \"email\" : \"fatai.kasana@gmail.com\",\r\n    \"latitude\" : 28.6692, \r\n    \"longitude\" : 77.4538,\r\n    \"coinsToSell\" : 500,\r\n    \"coinType\" : 5\r\n}",
+					"raw": "{\r\n    \"name\" : \"Tiger King\",\r\n    \"mobileNumber\" : \"+91-87462XXXX\",\r\n    \"email\" : \"tiger.singh@gmail.com\",\r\n    \"latitude\" : 28.6692, \r\n    \"longitude\" : 77.4538,\r\n    \"sellerCoinInfoEntity\" : [\r\n        {\r\n            \"coin_Type\" : 1,\r\n            \"coins_To_Sell\" : 100\r\n        }\r\n    ]\r\n    \r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -43,7 +43,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"name\" : \"Deepak\",\r\n    \"mobileNumber\" : \"+91-806050XXXX\",\r\n    \"email\" : \"Deepak.singh@gmail.com\",\r\n    \"latitude\" : 28.6692, \r\n    \"longitude\" : 77.4538,\r\n    \"coinsToBuy\" : 200,\r\n    \"coinType\" : 1\r\n}",
+					"raw": "{\r\n    \"name\" : \"Lion Don\",\r\n    \"mobileNumber\" : \"+91-807050XXXX\",\r\n    \"email\" : \"lion.honda@gmail.com\",\r\n    \"latitude\" : 28.6692, \r\n    \"longitude\" : 77.4538,\r\n    \"buyerCoinInfoEntity\" : [\r\n        {\r\n            \"coin_Type\" : 1,\r\n            \"coins_To_Buy\" : 200\r\n        }\r\n    ]\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
