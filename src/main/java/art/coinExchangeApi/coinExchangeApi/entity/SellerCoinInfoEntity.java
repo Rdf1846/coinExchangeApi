@@ -25,7 +25,7 @@ public class SellerCoinInfoEntity {
     private Integer coins_To_Sell;
 
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id")
     private Seller sellerInSellerCoinInfoEntity;
 

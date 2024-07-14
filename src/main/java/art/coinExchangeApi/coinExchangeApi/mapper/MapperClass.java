@@ -4,14 +4,27 @@ import art.coinExchangeApi.coinExchangeApi.dto.BuyerDto;
 import art.coinExchangeApi.coinExchangeApi.dto.SellerDto;
 import art.coinExchangeApi.coinExchangeApi.entity.Buyer;
 import art.coinExchangeApi.coinExchangeApi.entity.Seller;
+import art.coinExchangeApi.coinExchangeApi.entity.SellerCoinInfoEntity;
 import jakarta.validation.constraints.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class MapperClass {
 
     public static Seller mapSellerDtoToSellerJpaEntity(@NotNull SellerDto sellerDto)
     {
+        List<SellerCoinInfoEntity> sellerCoinInfoEntities = new ArrayList<>();
+        if (sellerDto.getSellerCoinInfoEntity() != null) {
+            for (SellerCoinInfoEntity tempEntity : sellerDto.getSellerCoinInfoEntity()) {
+                SellerCoinInfoEntity sellerCoinInfoEntity = new SellerCoinInfoEntity();
+                sellerCoinInfoEntity.setCoin_Type(tempEntity.getCoin_Type());
+                sellerCoinInfoEntity.setCoins_To_Sell(tempEntity.getCoins_To_Sell());
+                // The reference to the seller will be set in the service method
+                sellerCoinInfoEntities.add(sellerCoinInfoEntity);
+            }
+        }
         Seller seller = new Seller(
                 sellerDto.getId(),
                 sellerDto.getName(),
@@ -19,15 +32,30 @@ public class MapperClass {
                 sellerDto.getEmail(),
                 sellerDto.getLatitude(),
                 sellerDto.getLongitude(),
-                sellerDto.getSellerCoinInfoEntity()
-//                sellerDto.getCoinsToSell(),
-//                sellerDto.getCoinType()
+                sellerCoinInfoEntities
         );
+
+        for (SellerCoinInfoEntity coinInfoEntity : sellerCoinInfoEntities) {
+            coinInfoEntity.setSellerInSellerCoinInfoEntity(seller);
+        }
+
         return seller;
     }
 
     public static SellerDto mapSellerJpaEntityToSellerDto(@NotNull Seller seller)
     {
+        List<SellerCoinInfoEntity> sellerCoinInfoEntities = new ArrayList<>();
+        if (seller.getSellerCoinsDetailsList() != null) {
+            for (SellerCoinInfoEntity coinInfoEntity : seller.getSellerCoinsDetailsList()) {
+                SellerCoinInfoEntity tempEntity = new SellerCoinInfoEntity();
+                tempEntity.setId(coinInfoEntity.getId());
+                tempEntity.setCoin_Type(coinInfoEntity.getCoin_Type());
+                tempEntity.setCoins_To_Sell(coinInfoEntity.getCoins_To_Sell());
+                tempEntity.setSellerInSellerCoinInfoEntity(coinInfoEntity.getSellerInSellerCoinInfoEntity());
+                sellerCoinInfoEntities.add(tempEntity);
+            }
+        }
+
         SellerDto sellerDto = new SellerDto(
                 seller.getId(),
                 seller.getName(),
@@ -35,9 +63,7 @@ public class MapperClass {
                 seller.getEmail(),
                 seller.getLatitude(),
                 seller.getLongitude(),
-                seller.getSellerCoinsDetailsList()
-//                seller.getCoinsToSell(),
-//                seller.getCoinType()
+                sellerCoinInfoEntities
         );
         return sellerDto;
     }

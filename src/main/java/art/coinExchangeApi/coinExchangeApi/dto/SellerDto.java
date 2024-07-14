@@ -20,7 +20,4 @@ public class SellerDto {
     private double longitude;
 
     private List<SellerCoinInfoEntity> sellerCoinInfoEntity;
-
-   // private int coinsToSell;
-   // private int coinType;
 }

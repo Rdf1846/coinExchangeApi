@@ -50,8 +50,8 @@ public class CoinExchangeServiceImpl implements CoinExchangeService {
                 SellerCoinInfoEntity sellerCoinInfoEntity = new SellerCoinInfoEntity();
                 sellerCoinInfoEntity.setCoin_Type(tempEntity.getCoin_Type());
                 sellerCoinInfoEntity.setCoins_To_Sell(tempEntity.getCoins_To_Sell());
+                sellerCoinInfoEntity.setSellerInSellerCoinInfoEntity(seller); // Set the reference to Seller
                 sellerCoinInfoEntities.add(sellerCoinInfoEntity);
-                logger.info("ouput 1:", tempEntity.getCoin_Type());
                 logger.info("Output: Coin_Type={}, Coins_To_Sell={}", tempEntity.getCoin_Type(), tempEntity.getCoins_To_Sell());
 
             }
