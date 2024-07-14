@@ -18,6 +18,10 @@ public class SecurityConfiguration {
                                 .anyRequest().authenticated()
                 )
                 .csrf(csrf -> csrf.disable());
+        /* Here we have used crf.disable() method to allow all our calls to our endpoint, bcoz we have included
+        okta and spring security in our pom.xml, but we have not done anything to handle them till now.
+        we will update this securityConfiguration post implementation of okta security. */
+
         return http.build();
     }
 }
