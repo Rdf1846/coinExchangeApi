@@ -24,7 +24,7 @@ public class Seller {
     private double latitude;
     private double longitude;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<SellerCoinInfoEntity> sellerCoinInfoEntity;
+    @OneToMany(mappedBy = "sellerInSellerCoinInfoEntity", cascade = CascadeType.ALL)
+    private List<SellerCoinInfoEntity> sellerCoinsDetailsList;
 
 }

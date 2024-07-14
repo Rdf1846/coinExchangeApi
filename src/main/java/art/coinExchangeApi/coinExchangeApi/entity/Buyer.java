@@ -26,7 +26,7 @@ public class Buyer {
     private double latitude;
     private double longitude;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "buyerInBuyerCoinInfoEntity", cascade = CascadeType.ALL)
     private List<BuyerCoinInfoEntity> buyerCoinInfoEntity;
 
 }

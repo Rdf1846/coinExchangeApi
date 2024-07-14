@@ -23,4 +23,7 @@ public class BuyerCoinInfoEntity {
     @Column(name = "coinsToBuy", nullable = false, columnDefinition = "INT DEFAULT 0")
     private Integer coinsToBuy;
 
+    @ManyToOne
+    @JoinColumn(name = "buyer_id")
+    private Buyer buyerInBuyerCoinInfoEntity;
 }

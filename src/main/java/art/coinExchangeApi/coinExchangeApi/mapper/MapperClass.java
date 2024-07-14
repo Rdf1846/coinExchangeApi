@@ -35,7 +35,7 @@ public class MapperClass {
                 seller.getEmail(),
                 seller.getLatitude(),
                 seller.getLongitude(),
-                seller.getSellerCoinInfoEntity()
+                seller.getSellerCoinsDetailsList()
 //                seller.getCoinsToSell(),
 //                seller.getCoinType()
         );

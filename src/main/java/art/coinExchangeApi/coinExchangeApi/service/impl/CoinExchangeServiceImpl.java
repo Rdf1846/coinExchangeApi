@@ -56,7 +56,7 @@ public class CoinExchangeServiceImpl implements CoinExchangeService {
 
             }
         }
-        seller.setSellerCoinInfoEntity(sellerCoinInfoEntities);
+        seller.setSellerCoinsDetailsList(sellerCoinInfoEntities);
         logger.info("Set the initialized list to the seller entity");
         logger.info("ouput 2:", sellerCoinInfoEntities.toString());
 
@@ -114,7 +114,7 @@ public class CoinExchangeServiceImpl implements CoinExchangeService {
             Integer coinsToBuyValue = entry.getValue();
 
             // Find matching CoinInfo in seller's list
-            SellerCoinInfoEntity sellerCoinInfoEntityy = seller.getSellerCoinInfoEntity().stream()
+            SellerCoinInfoEntity sellerCoinInfoEntityy = seller.getSellerCoinsDetailsList().stream()
                     .filter(sellerCoinInfoEntity -> sellerCoinInfoEntity.getCoin_Type().equals(coinType))
                     .findFirst()
                     .orElse(null);

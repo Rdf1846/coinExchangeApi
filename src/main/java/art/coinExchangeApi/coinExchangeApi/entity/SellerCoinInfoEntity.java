@@ -10,7 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-@Table(name = "Seller_coin_details")
+@Table(name = "Jpa_Seller_coin_details")
 @Entity
 public class SellerCoinInfoEntity {
 
@@ -23,5 +23,10 @@ public class SellerCoinInfoEntity {
 
     @Column(name = "coins_To_Sell", nullable = false, columnDefinition = "INT DEFAULT 0")
     private Integer coins_To_Sell;
+
+
+    @ManyToOne
+    @JoinColumn(name = "seller_id")
+    private Seller sellerInSellerCoinInfoEntity;
 
 }
