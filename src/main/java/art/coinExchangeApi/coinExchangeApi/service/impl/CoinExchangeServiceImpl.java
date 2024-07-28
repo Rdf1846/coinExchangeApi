@@ -9,13 +9,17 @@ import art.coinExchangeApi.coinExchangeApi.repository.BuyerRepository;
 import art.coinExchangeApi.coinExchangeApi.repository.SellerRepository;
 import art.coinExchangeApi.coinExchangeApi.repository.UserDetailsRepository;
 import art.coinExchangeApi.coinExchangeApi.service.CoinExchangeService;
+import jakarta.validation.constraints.Null;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Optionals;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -171,9 +175,71 @@ public class CoinExchangeServiceImpl implements CoinExchangeService {
         return resultUserDto;
     }
 
+    @Override
+    public boolean verifyUserPassword(Map<String, String> request) {
+        String userName = request.get("userName");
+        String email = request.get("email");
+        String mobileNumber = request.get("mobileNumber");
+        String password = request.get("password");
+        Optional<UserDetailsEntity> userDetailsEntityOptional = Optional.empty();
+        if(userName != null) {
+            userDetailsEntityOptional = userDetailsRepository.findByUserName(userName);
+        } else if (email != null) {
+            userDetailsEntityOptional = userDetailsRepository.findByEmail(email);
+        } else if (mobileNumber != null) {
+            userDetailsEntityOptional = userDetailsRepository.findByMobileNumber(mobileNumber);
+        }
+        else {
+            return false;
+        }
+        if(userDetailsEntityOptional.isPresent())
+        {
+            UserDetailsEntity userDetailsEntity = userDetailsEntityOptional.get();
+            return password.equals(userDetailsEntity.getPassword());
+        }
 
+        return false;
+    }
 
+    @Override
+    public String updateInUserDetailsEntity(String userName, UserDto userDto) {
+        UserDetailsEntity userDetailsEntity = userDetailsRepository
+                .findByUserName(userName)
+                .orElseThrow( () -> new RuntimeException("User does not exist"));
 
+        if(userDto.getUserName() != null) {
+            userDetailsEntity.setUserName(userDto.getUserName());
+        }
+        if(userDto.getPassword() != null) {
+            userDetailsEntity.setPassword(userDto.getPassword());
+        }if(userDto.getName() != null) {
+            userDetailsEntity.setName(userDto.getName());
+        }if(userDto.getEmail() != null) {
+            userDetailsEntity.setEmail(userDto.getEmail());
+        }if(userDto.getMobileNumber() != null) {
+            userDetailsEntity.setMobileNumber(userDto.getMobileNumber());
+        }if(userDto.getLongitude() != null) {
+            userDetailsEntity.setLongitude(userDto.getLongitude());
+        }if(userDto.getLatitude() != null) {
+            userDetailsEntity.setLatitude(userDto.getLongitude());
+        }if(userDto.getCoinsDenominationList() != null) {
+            userDetailsEntity.setCoinsDenominationList(userDto.getCoinsDenominationList());
+        }
+
+        UserDetailsEntity savedUserDetailsEntity =  userDetailsRepository.save(userDetailsEntity);
+        return "success";
+    }
+
+    @Override
+    public UserDto getUserDetailsByUserName(String userName) {
+        UserDetailsEntity userDetailsEntity = userDetailsRepository
+                .findByUserName(userName)
+                .orElseThrow( () -> new RuntimeException("User does not exist"));
+
+        UserDto userDto = MapperClass.mapUserDetailsJpaEntityToUserDto(userDetailsEntity);
+
+        return userDto;
+    }
 
 }
 

@@ -14,8 +14,8 @@ public class UserDto {
     private String userName;
     private String mobileNumber;
     private String email;
-    private double latitude;
-    private double longitude;
+    private Double latitude;
+    private Double longitude;
 
     private String password;
     private List<CoinDenominationDetailsEntity> coinsDenominationList;

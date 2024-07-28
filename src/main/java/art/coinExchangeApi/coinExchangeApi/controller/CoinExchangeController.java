@@ -4,7 +4,6 @@ import art.coinExchangeApi.coinExchangeApi.customResponseEntity.BuyerCustomRespo
 import art.coinExchangeApi.coinExchangeApi.dto.BuyerDto;
 import art.coinExchangeApi.coinExchangeApi.dto.SellerDto;
 import art.coinExchangeApi.coinExchangeApi.dto.UserDto;
-import art.coinExchangeApi.coinExchangeApi.entity.UserDetailsEntity;
 import art.coinExchangeApi.coinExchangeApi.service.CoinExchangeService;
 import art.coinExchangeApi.coinExchangeApi.service.EmailService;
 import art.coinExchangeApi.coinExchangeApi.service.OtpService;
@@ -91,4 +90,26 @@ public class CoinExchangeController {
         boolean isValid = otpService.verifyOtp(mobileNumber, otp);
         return ResponseEntity.ok(isValid);
     }
+
+    @GetMapping("/verifyUserPassword")
+    public ResponseEntity<Boolean> verifyUserPassword(@RequestBody Map<String, String> request) {
+        boolean isPasswordValid = coinExchangeService.verifyUserPassword(request);
+        return ResponseEntity.ok(isPasswordValid);
+    }
+
+    @PutMapping("/updateInUserDetailsEntity/{userName}")
+    public ResponseEntity<String> updateInUserDetailsEntity(@PathVariable String userName,@RequestBody UserDto userDto)
+    {
+        String result = coinExchangeService.updateInUserDetailsEntity(userName, userDto);
+        return ResponseEntity.ok(result);
+
+    }
+
+    @GetMapping("/fetchUserOwnDetails/{userName}")
+    public ResponseEntity<UserDto> getUserDetailsByUserName(@PathVariable String userName)
+    {
+        UserDto userDto = coinExchangeService.getUserDetailsByUserName(userName);
+        return ResponseEntity.ok(userDto);
+    }
+
 }

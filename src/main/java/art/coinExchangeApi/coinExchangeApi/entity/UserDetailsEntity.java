@@ -32,8 +32,8 @@ public class UserDetailsEntity {
     @Column(unique = true, nullable = false)
     private String email;
 
-    private double latitude;
-    private double longitude;
+    private Double latitude;
+    private Double longitude;
 
     @Column(nullable = false)
     private String password;
