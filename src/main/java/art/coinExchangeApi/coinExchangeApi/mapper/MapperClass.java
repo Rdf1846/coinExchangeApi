@@ -2,10 +2,8 @@ package art.coinExchangeApi.coinExchangeApi.mapper;
 
 import art.coinExchangeApi.coinExchangeApi.dto.BuyerDto;
 import art.coinExchangeApi.coinExchangeApi.dto.SellerDto;
-import art.coinExchangeApi.coinExchangeApi.entity.Buyer;
-import art.coinExchangeApi.coinExchangeApi.entity.BuyerCoinInfoEntity;
-import art.coinExchangeApi.coinExchangeApi.entity.Seller;
-import art.coinExchangeApi.coinExchangeApi.entity.SellerCoinInfoEntity;
+import art.coinExchangeApi.coinExchangeApi.dto.UserDto;
+import art.coinExchangeApi.coinExchangeApi.entity.*;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.ArrayList;
@@ -127,4 +125,69 @@ public class MapperClass {
         return buyerDto;
     }
 
+    public static UserDetailsEntity mapUserDtoToUserDetailsJpaEntity(@NotNull UserDto userDto)
+    {
+        List<CoinDenominationDetailsEntity> coinDenominationDetailsEntityList = new ArrayList<>();
+        if (userDto.getCoinsDenominationList() != null) {
+            for (CoinDenominationDetailsEntity tempEntity : userDto.getCoinsDenominationList()) {
+                CoinDenominationDetailsEntity coinDenominationDetailsEntity = new CoinDenominationDetailsEntity();
+                coinDenominationDetailsEntity.setCoin_Type(tempEntity.getCoin_Type());
+                coinDenominationDetailsEntity.setNumber_of_coins(tempEntity.getNumber_of_coins());
+                coinDenominationDetailsEntity.setTotal(tempEntity.getTotal());
+                coinDenominationDetailsEntity.setTransaction_type_SellOrBuy(tempEntity.getTransaction_type_SellOrBuy());
+
+                // The reference to the user will be set in the service method
+                coinDenominationDetailsEntityList.add(coinDenominationDetailsEntity);
+            }
+        }
+
+        UserDetailsEntity userDetailsEntity = new UserDetailsEntity(
+                userDto.getId(),
+                userDto.getName(),
+                userDto.getUserName(),
+                userDto.getMobileNumber(),
+                userDto.getEmail(),
+                userDto.getLatitude(),
+                userDto.getLongitude(),
+                userDto.getPassword(),
+                coinDenominationDetailsEntityList
+
+        );
+        // Setting up the user reference in each coinsDenomintaionEntity
+        for (CoinDenominationDetailsEntity coinInfoEntity : coinDenominationDetailsEntityList) {
+            coinInfoEntity.setUserDetailsEntityCoins(userDetailsEntity);
+        }
+
+        return userDetailsEntity;
+    }
+
+    public static UserDto mapUserDetailsJpaEntityToUserDto(@NotNull UserDetailsEntity userDetailsEntity) {
+
+        List<CoinDenominationDetailsEntity> coinDenominationDetailsEntityList = new ArrayList<>();
+        if (userDetailsEntity.getCoinsDenominationList() != null) {
+            for (CoinDenominationDetailsEntity coinInfoEntity : userDetailsEntity.getCoinsDenominationList()) {
+                CoinDenominationDetailsEntity tempEntity = new CoinDenominationDetailsEntity();
+                tempEntity.setId(coinInfoEntity.getId());
+                tempEntity.setCoin_Type(coinInfoEntity.getCoin_Type());
+                tempEntity.setNumber_of_coins(coinInfoEntity.getNumber_of_coins());
+                tempEntity.setTotal(coinInfoEntity.getTotal());
+                tempEntity.setTransaction_type_SellOrBuy(coinInfoEntity.getTransaction_type_SellOrBuy());
+                coinDenominationDetailsEntityList.add(tempEntity);
+            }
+        }
+
+        UserDto userDto = new UserDto(
+                userDetailsEntity.getId(),
+                userDetailsEntity.getName(),
+                userDetailsEntity.getUserName(),
+                userDetailsEntity.getMobileNumber(),
+                userDetailsEntity.getEmail(),
+                userDetailsEntity.getLatitude(),
+                userDetailsEntity.getLongitude(),
+                userDetailsEntity.getPassword(),
+                coinDenominationDetailsEntityList
+        );
+        return userDto;
+
+    }
 }

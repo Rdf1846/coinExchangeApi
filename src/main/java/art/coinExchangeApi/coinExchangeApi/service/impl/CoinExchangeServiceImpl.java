@@ -2,21 +2,24 @@ package art.coinExchangeApi.coinExchangeApi.service.impl;
 
 import art.coinExchangeApi.coinExchangeApi.dto.BuyerDto;
 import art.coinExchangeApi.coinExchangeApi.dto.SellerDto;
-import art.coinExchangeApi.coinExchangeApi.entity.Buyer;
-import art.coinExchangeApi.coinExchangeApi.entity.BuyerCoinInfoEntity;
-import art.coinExchangeApi.coinExchangeApi.entity.Seller;
-import art.coinExchangeApi.coinExchangeApi.entity.SellerCoinInfoEntity;
+import art.coinExchangeApi.coinExchangeApi.dto.UserDto;
+import art.coinExchangeApi.coinExchangeApi.entity.*;
 import art.coinExchangeApi.coinExchangeApi.mapper.MapperClass;
 import art.coinExchangeApi.coinExchangeApi.repository.BuyerRepository;
 import art.coinExchangeApi.coinExchangeApi.repository.SellerRepository;
+import art.coinExchangeApi.coinExchangeApi.repository.UserDetailsRepository;
 import art.coinExchangeApi.coinExchangeApi.service.CoinExchangeService;
+import jakarta.validation.constraints.Null;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Optionals;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,10 +31,13 @@ public class CoinExchangeServiceImpl implements CoinExchangeService {
 
     private BuyerRepository buyerRepository;
 
+    private UserDetailsRepository userDetailsRepository;
+
     @Autowired
-    public CoinExchangeServiceImpl(SellerRepository sellerRepository, BuyerRepository buyerRepository) {
+    public CoinExchangeServiceImpl(SellerRepository sellerRepository, BuyerRepository buyerRepository, UserDetailsRepository userDetailsRepository) {
         this.sellerRepository = sellerRepository;
         this.buyerRepository = buyerRepository;
+        this.userDetailsRepository = userDetailsRepository;
     }
 
 
@@ -120,7 +126,7 @@ public class CoinExchangeServiceImpl implements CoinExchangeService {
     }
 
 
-	/**
+    /**
 	 * @param tempList
 	 * @param allSellerList
 	 * @return
@@ -136,4 +142,106 @@ public class CoinExchangeServiceImpl implements CoinExchangeService {
 	}
 
 
+
+//New code from here
+
+    @Override
+    public UserDto registerUserDetails(UserDto userDto) {
+        UserDetailsEntity userDetailsEntity = MapperClass.mapUserDtoToUserDetailsJpaEntity(userDto);
+
+        List<CoinDenominationDetailsEntity> coinDenominationDetailsEntityList = new ArrayList<>();
+        if (userDto.getCoinsDenominationList() != null) {
+            for (CoinDenominationDetailsEntity tempEntity : userDto.getCoinsDenominationList()) {
+                CoinDenominationDetailsEntity coinDenominationDetailsEntity = new CoinDenominationDetailsEntity();
+                coinDenominationDetailsEntity.setCoin_Type(tempEntity.getCoin_Type());
+                coinDenominationDetailsEntity.setNumber_of_coins(tempEntity.getNumber_of_coins());
+                coinDenominationDetailsEntity.setTotal(tempEntity.getTotal());
+                coinDenominationDetailsEntity.setTransaction_type_SellOrBuy(tempEntity.getTransaction_type_SellOrBuy());
+                coinDenominationDetailsEntity.setUserDetailsEntityCoins(userDetailsEntity); // Set the reference to Seller
+                coinDenominationDetailsEntityList.add(coinDenominationDetailsEntity);
+                logger.info("Output: Coin_Type={}, Coins_To_Sell={}, total={}, transaction_type={}" , tempEntity.getCoin_Type(), tempEntity.getNumber_of_coins(), tempEntity.getTotal(), tempEntity.getTransaction_type_SellOrBuy());
+            }
+        }
+        userDetailsEntity.setCoinsDenominationList(coinDenominationDetailsEntityList);
+        logger.info("Set the initialized list to the userDetails entity");
+
+        UserDetailsEntity savedUserDetailsEntity = userDetailsRepository.save(userDetailsEntity);
+        logger.info("saving the user entity using save method");
+        UserDto resultUserDto = MapperClass.mapUserDetailsJpaEntityToUserDto(savedUserDetailsEntity);
+        logger.info("mapping back user jpa entity to user dto");
+        logger.info("Exit register user");
+
+
+        return resultUserDto;
+    }
+
+    @Override
+    public boolean verifyUserPassword(Map<String, String> request) {
+        String userName = request.get("userName");
+        String email = request.get("email");
+        String mobileNumber = request.get("mobileNumber");
+        String password = request.get("password");
+        Optional<UserDetailsEntity> userDetailsEntityOptional = Optional.empty();
+        if(userName != null) {
+            userDetailsEntityOptional = userDetailsRepository.findByUserName(userName);
+        } else if (email != null) {
+            userDetailsEntityOptional = userDetailsRepository.findByEmail(email);
+        } else if (mobileNumber != null) {
+            userDetailsEntityOptional = userDetailsRepository.findByMobileNumber(mobileNumber);
+        }
+        else {
+            return false;
+        }
+        if(userDetailsEntityOptional.isPresent())
+        {
+            UserDetailsEntity userDetailsEntity = userDetailsEntityOptional.get();
+            return password.equals(userDetailsEntity.getPassword());
+        }
+
+        return false;
+    }
+
+    @Override
+    public String updateInUserDetailsEntity(String userName, UserDto userDto) {
+        UserDetailsEntity userDetailsEntity = userDetailsRepository
+                .findByUserName(userName)
+                .orElseThrow( () -> new RuntimeException("User does not exist"));
+
+        if(userDto.getUserName() != null) {
+            userDetailsEntity.setUserName(userDto.getUserName());
+        }
+        if(userDto.getPassword() != null) {
+            userDetailsEntity.setPassword(userDto.getPassword());
+        }if(userDto.getName() != null) {
+            userDetailsEntity.setName(userDto.getName());
+        }if(userDto.getEmail() != null) {
+            userDetailsEntity.setEmail(userDto.getEmail());
+        }if(userDto.getMobileNumber() != null) {
+            userDetailsEntity.setMobileNumber(userDto.getMobileNumber());
+        }if(userDto.getLongitude() != null) {
+            userDetailsEntity.setLongitude(userDto.getLongitude());
+        }if(userDto.getLatitude() != null) {
+            userDetailsEntity.setLatitude(userDto.getLongitude());
+        }if(userDto.getCoinsDenominationList() != null) {
+            userDetailsEntity.setCoinsDenominationList(userDto.getCoinsDenominationList());
+        }
+
+        UserDetailsEntity savedUserDetailsEntity =  userDetailsRepository.save(userDetailsEntity);
+        return "success";
+    }
+
+    @Override
+    public UserDto getUserDetailsByUserName(String userName) {
+        UserDetailsEntity userDetailsEntity = userDetailsRepository
+                .findByUserName(userName)
+                .orElseThrow( () -> new RuntimeException("User does not exist"));
+
+        UserDto userDto = MapperClass.mapUserDetailsJpaEntityToUserDto(userDetailsEntity);
+
+        return userDto;
+    }
+
 }
+
+
+
