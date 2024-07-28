@@ -2,13 +2,12 @@ package art.coinExchangeApi.coinExchangeApi.service.impl;
 
 import art.coinExchangeApi.coinExchangeApi.dto.BuyerDto;
 import art.coinExchangeApi.coinExchangeApi.dto.SellerDto;
-import art.coinExchangeApi.coinExchangeApi.entity.Buyer;
-import art.coinExchangeApi.coinExchangeApi.entity.BuyerCoinInfoEntity;
-import art.coinExchangeApi.coinExchangeApi.entity.Seller;
-import art.coinExchangeApi.coinExchangeApi.entity.SellerCoinInfoEntity;
+import art.coinExchangeApi.coinExchangeApi.dto.UserDto;
+import art.coinExchangeApi.coinExchangeApi.entity.*;
 import art.coinExchangeApi.coinExchangeApi.mapper.MapperClass;
 import art.coinExchangeApi.coinExchangeApi.repository.BuyerRepository;
 import art.coinExchangeApi.coinExchangeApi.repository.SellerRepository;
+import art.coinExchangeApi.coinExchangeApi.repository.UserDetailsRepository;
 import art.coinExchangeApi.coinExchangeApi.service.CoinExchangeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,10 +27,13 @@ public class CoinExchangeServiceImpl implements CoinExchangeService {
 
     private BuyerRepository buyerRepository;
 
+    private UserDetailsRepository userDetailsRepository;
+
     @Autowired
-    public CoinExchangeServiceImpl(SellerRepository sellerRepository, BuyerRepository buyerRepository) {
+    public CoinExchangeServiceImpl(SellerRepository sellerRepository, BuyerRepository buyerRepository, UserDetailsRepository userDetailsRepository) {
         this.sellerRepository = sellerRepository;
         this.buyerRepository = buyerRepository;
+        this.userDetailsRepository = userDetailsRepository;
     }
 
 
@@ -120,7 +122,7 @@ public class CoinExchangeServiceImpl implements CoinExchangeService {
     }
 
 
-	/**
+    /**
 	 * @param tempList
 	 * @param allSellerList
 	 * @return
@@ -136,4 +138,44 @@ public class CoinExchangeServiceImpl implements CoinExchangeService {
 	}
 
 
+
+//New code from here
+
+    @Override
+    public UserDto registerUserDetails(UserDto userDto) {
+        UserDetailsEntity userDetailsEntity = MapperClass.mapUserDtoToUserDetailsJpaEntity(userDto);
+
+        List<CoinDenominationDetailsEntity> coinDenominationDetailsEntityList = new ArrayList<>();
+        if (userDto.getCoinsDenominationList() != null) {
+            for (CoinDenominationDetailsEntity tempEntity : userDto.getCoinsDenominationList()) {
+                CoinDenominationDetailsEntity coinDenominationDetailsEntity = new CoinDenominationDetailsEntity();
+                coinDenominationDetailsEntity.setCoin_Type(tempEntity.getCoin_Type());
+                coinDenominationDetailsEntity.setNumber_of_coins(tempEntity.getNumber_of_coins());
+                coinDenominationDetailsEntity.setTotal(tempEntity.getTotal());
+                coinDenominationDetailsEntity.setTransaction_type_SellOrBuy(tempEntity.getTransaction_type_SellOrBuy());
+                coinDenominationDetailsEntity.setUserDetailsEntityCoins(userDetailsEntity); // Set the reference to Seller
+                coinDenominationDetailsEntityList.add(coinDenominationDetailsEntity);
+                logger.info("Output: Coin_Type={}, Coins_To_Sell={}, total={}, transaction_type={}" , tempEntity.getCoin_Type(), tempEntity.getNumber_of_coins(), tempEntity.getTotal(), tempEntity.getTransaction_type_SellOrBuy());
+            }
+        }
+        userDetailsEntity.setCoinsDenominationList(coinDenominationDetailsEntityList);
+        logger.info("Set the initialized list to the userDetails entity");
+
+        UserDetailsEntity savedUserDetailsEntity = userDetailsRepository.save(userDetailsEntity);
+        logger.info("saving the user entity using save method");
+        UserDto resultUserDto = MapperClass.mapUserDetailsJpaEntityToUserDto(savedUserDetailsEntity);
+        logger.info("mapping back user jpa entity to user dto");
+        logger.info("Exit register user");
+
+
+        return resultUserDto;
+    }
+
+
+
+
+
 }
+
+
+

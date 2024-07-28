@@ -3,6 +3,8 @@ package art.coinExchangeApi.coinExchangeApi.controller;
 import art.coinExchangeApi.coinExchangeApi.customResponseEntity.BuyerCustomResponseEntity;
 import art.coinExchangeApi.coinExchangeApi.dto.BuyerDto;
 import art.coinExchangeApi.coinExchangeApi.dto.SellerDto;
+import art.coinExchangeApi.coinExchangeApi.dto.UserDto;
+import art.coinExchangeApi.coinExchangeApi.entity.UserDetailsEntity;
 import art.coinExchangeApi.coinExchangeApi.service.CoinExchangeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +30,12 @@ public class CoinExchangeController {
     public ResponseEntity<String> registerSeller(@RequestBody SellerDto sellerDto) {
         coinExchangeService.registerSeller(sellerDto);
         return ResponseEntity.ok("Your profile has been created successfully and addedd to our database. If we found any buyer, then we will share your profile with them so that they can contact you directly! Thanks for selling");
+    }
+
+    @PostMapping("/registerUser")
+    public ResponseEntity<String> registerUserDetails(@RequestBody UserDto userDto) {
+        coinExchangeService.registerUserDetails(userDto);
+        return ResponseEntity.ok("Your profile has been created successfully and added to our database. Thanks for sign up");
     }
 
     @PostMapping("/buy-coins/sellerList")
