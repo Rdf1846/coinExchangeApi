@@ -12,7 +12,7 @@ import javax.annotation.PostConstruct;
 
 @Service
 public class SmsServiceImpl implements SmsService {
-    @Value("${twilio.account.sid}")
+    @Value("${twilio.account.sid}") //fetch the value from  application.properties
     private String accountSid;
 
     @Value("${twilio.auth.token}")
@@ -31,7 +31,7 @@ public class SmsServiceImpl implements SmsService {
             Message.creator(
                     new PhoneNumber(mobileNumber),
                     new PhoneNumber(senderPhoneNumber),
-                    "Your OTP code is: " + otp
+                    "Your OTP will expire in 5mins and Otp is: " + otp
             ).create();
         }
 

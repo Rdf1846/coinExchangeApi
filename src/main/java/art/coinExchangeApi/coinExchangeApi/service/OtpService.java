@@ -6,5 +6,4 @@ public interface OtpService {
 
     boolean verifyOtp(String key, String otp);
 
-    void clearOtpAfterVerify(String key);
 }
